@@ -151,4 +151,4 @@ It is strongly suggested that the folder be secured by taking the following step
 Changelog
 ---------
 
-20240722 v0.1.1 (Mike Schiessl): Added support for account switch key
+- 20240722 v0.1.1 (Mike Schiessl): Added support for account switch key

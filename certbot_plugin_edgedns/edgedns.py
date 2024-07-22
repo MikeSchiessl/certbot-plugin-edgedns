@@ -364,7 +364,6 @@ class _EdgeDNSClient(object):
         self.session.auth = self.edgegrid_auth
         self.session.params = self.http_parameters
 
-        print(f"MIKE DEBUG: http_parameters = {self.http_parameters}")
         for zone_name in zone_dns_name_guesses:
             # get the zone id
             try:
