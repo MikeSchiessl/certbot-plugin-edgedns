@@ -61,6 +61,7 @@ An example ``credentials.ini`` file using Open Edgegrid keys directly:
    [certbot_plugin_edgedns:]edgedns_access_token = akab-1234567890qwerty-asdfghjklzxcvtnu
    [certbot_plugin_edgedns:]edgedns_client_secret = abcdefghijklmnopqrstuvwxyz1234567890ABCDEFG= 
    [certbot_plugin_edgedns:]edgedns_host = akab-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.luna.akamaiapis.net
+   [certbot_plugin_edgedns:]account_key = Akamai Account Switch Key (optional)
 
 An example ``credentials.ini`` file using Open Edgegrid .edgerc file:
 
@@ -147,3 +148,7 @@ It is strongly suggested that the folder be secured by taking the following step
 1. chown root:root /etc/letsencrypt/.secrets
 2. chmod 600 /etc/letsencrypt/.secrets
 
+Changelog
+---------
+
+20240722 v0.1.1 (Mike Schiessl): Added support for account switch key
