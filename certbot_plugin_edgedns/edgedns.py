@@ -27,7 +27,8 @@ EDGEGRID_CREDS = {"client_token": "",
                   "client_secret": "",
                   "host": "",
                   "edgerc_path": "",
-                  "edgerc_section": ""
+                  "edgerc_section": "",
+                  "account_key": ""
                  }
 RECORD_TTL = 600
 DEFAULT_PROPAGATION_DELAY = 180
@@ -75,6 +76,7 @@ class Authenticator(dns_common.DNSAuthenticator):
         EDGEGRID_CREDS["client_secret"] = client_secret = self.credentials.conf('client_secret')
         EDGEGRID_CREDS["access_token"] = access_token = self.credentials.conf('access_token')
         EDGEGRID_CREDS["host"] = host = self.credentials.conf('host')
+        EDGEGRID_CREDS["account_key"] = account_key = self.credentials.conf('account_key')
         errmsg = ''
         missing = 0
         if not client_token:	
@@ -168,6 +170,12 @@ class _EdgeDNSClient(object):
             self.edgegrid_auth = EdgeGridAuth(client_token = EDGEGRID_CREDS["client_token"],
                                               client_secret = EDGEGRID_CREDS["client_secret"],
                                               access_token = EDGEGRID_CREDS["access_token"])
+
+        ## Adding parameters
+        self.http_parameters = {}
+        if EDGEGRID_CREDS["account_key"]:
+            self.http_parameters = {'accountSwitchKey': account_key}
+
         # Error checking the .edgerc file
         if pathhost.find('://') > 0:
             raise errors.PluginError('{0}: You have specified an invalid host entry '
@@ -214,6 +222,7 @@ class _EdgeDNSClient(object):
             raise errors.PluginError('Managed zone not found in domain {0}'.format(domain)
             )
         self.session.auth = self.edgegrid_auth
+        self.session.params = self.http_parameters
         self.session.headers.update({'Content-Type': 'application/json'})
         getpathurl = self.EDGEDNSZONESURL + '{0}/names/{1}/types/TXT'.format(zone, record_name)
         logger.debug("EDGEDNS: get_text_record. GET url: {0}".format(getpathurl)) 
@@ -276,6 +285,7 @@ class _EdgeDNSClient(object):
             self.session = requests.Session()
         with self.session as session:
             session.auth = self.edgegrid_auth
+            self.session.params = self.http_parameters
             try:
                 self._process_add_record(session, zone, txt_recordset, record_content)
             except errors.PluginError as pe:
@@ -321,6 +331,7 @@ class _EdgeDNSClient(object):
             self.session = requests.Session()
         with self.session as session:
             session.auth = self.edgegrid_auth
+            self.session.params = self.http_parameters
             try:
                 self._process_del_record(session, zone, txt_recordset, record_content)
             except errors.PluginError as pe:
@@ -347,6 +358,7 @@ class _EdgeDNSClient(object):
         zone_dns_name_guesses = dns_common.base_domain_name_guesses(domain)
         
         self.session.auth = self.edgegrid_auth
+        self.session.params = self.http_parameters
 
         for zone_name in zone_dns_name_guesses:
             # get the zone id
